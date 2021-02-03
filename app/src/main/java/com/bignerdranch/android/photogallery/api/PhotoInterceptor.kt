@@ -7,6 +7,7 @@ import okhttp3.Response
 
 private const val API_KEY = "e4d22caf60df34689db8d28e660c6427"
 
+//создание динамического URLa
 class PhotoInterceptor: Interceptor{
 
     override fun intercept(chain: Interceptor.Chain): Response {

@@ -1,6 +1,5 @@
 package com.bignerdranch.android.photogallery
 
-import QueryPreferences
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
@@ -9,12 +8,17 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.bignerdranch.android.photogallery.entity.GalleryItem
+import com.bignerdranch.android.photogallery.model.FlickrFetchr
+import com.bignerdranch.android.photogallery.model.QueryPreferences
 
 private const val TAG = "PollWorker"
 
-class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(context, workerParams) {
+class PollWorker(val context: Context, workerParams: WorkerParameters) :
+    Worker(context, workerParams) {
 
     override fun doWork(): Result {
+    //запрос на получение последних фотографий
         val query = QueryPreferences.getStoredQuery(context)
         val lastResultId = QueryPreferences.getLastResultId(context)
         val items: List<GalleryItem> = if (query.isEmpty()) {
@@ -24,22 +28,26 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
                 ?.photos
                 ?.galleryItems
         } else {
-            FlickrFetchr().searchPhotosRequest(query)
+            FlickrFetchr()
+                .searchPhotosRequest(query)
                 .execute()
                 .body()
                 ?.photos
                 ?.galleryItems
         } ?: emptyList()
+
+//        Проверка, нет ли новых фотографий
         if (items.isEmpty()) {
             return Result.success()
         }
         val resultId = items.first().id
         if (resultId == lastResultId) {
-            Log.i(TAG, "Got an old result: $resultId")
+            Log.i(TAG, "Получил старый результат: $resultId")
         } else {
-            Log.i(TAG, "Got a new result: $resultId")
+            Log.i(TAG, "Получил новый результат: $resultId")
             QueryPreferences.setLastResultId(context, resultId)
 
+//            создание отложеного интента и добовление канала PhotoGalleryApplication
             val intent = PhotoGalleryActivity.newIntent(context)
             val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
             val resources = context.resources
@@ -52,11 +60,13 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build()
-            showBackgroundNotification( notification)
+            showBackgroundNotification(notification)
         }
         return Result.success()
     }
 
+
+    //    Отправка широковещательного интента
     private fun showBackgroundNotification(notification: Notification) {
         val intent = Intent(ACTION_SHOW_NOTIFICATION).apply {
             putExtra(REQUEST_CODE, 0)
@@ -66,7 +76,10 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
     }
 
     companion object {
-        const val ACTION_SHOW_NOTIFICATION = "com.bignerdranch.android.photogallery.SHOW_NOTIFICATION"
+        const val ACTION_SHOW_NOTIFICATION =
+            "com.bignerdranch.android.photogallery.SHOW_NOTIFICATION"
+
+        //        уникальным идентификатором пользовательского разрешения
         const val PERM_PRIVATE = "com.bignerdranch.android.photogallery.PRIVATE"
         const val REQUEST_CODE = "REQUEST_CODE"
         const val NOTIFICATION = "NOTIFICATION"

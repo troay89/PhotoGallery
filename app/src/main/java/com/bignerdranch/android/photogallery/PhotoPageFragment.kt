@@ -12,6 +12,7 @@ import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 
+//Настройка фрагмента браузера
 private const val ARG_URI = "photo_page_url"
 class PhotoPageFragment : VisibleFragment() {
     private lateinit var uri: Uri
@@ -21,6 +22,7 @@ class PhotoPageFragment : VisibleFragment() {
         super.onCreate(savedInstanceState)
         uri = arguments?.getParcelable(ARG_URI) ?: Uri.EMPTY
     }
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +32,7 @@ class PhotoPageFragment : VisibleFragment() {
         val view = inflater.inflate(R.layout.fragment_photo_page, container, false)
         progressBar = view.findViewById(R.id.progress_bar)
         progressBar.max = 100
+//        Загрузка URL в WebView
         webView = view.findViewById(R.id.web_view)
         webView.settings.javaScriptEnabled = true
         webView.webChromeClient = object : WebChromeClient() {

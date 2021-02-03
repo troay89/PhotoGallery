@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 
 private const val TAG = "VisibleFragment"
 
+//Создание и регистрация динамического приемника
 abstract class VisibleFragment : Fragment() {
 
     private val onShowNotification = object : BroadcastReceiver() {

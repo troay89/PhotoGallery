@@ -11,6 +11,7 @@ const val NOTIFICATION_CHANNEL_ID = "flickr_poll"
 
 class PhotoGalleryApplication: Application() {
 
+//    Создание канала уведомлений
     override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

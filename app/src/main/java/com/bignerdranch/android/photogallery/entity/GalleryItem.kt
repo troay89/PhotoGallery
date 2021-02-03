@@ -1,10 +1,12 @@
-package com.bignerdranch.android.photogallery
+package com.bignerdranch.android.photogallery.entity
 
 import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
-data class GalleryItem(var title: String = "", var id: String = "", @SerializedName("url_s") var url: String = "",
-                       @SerializedName("owner") var owner: String = ""){
+data class GalleryItem(var title: String = "", var id: String = "", @SerializedName("url_s")
+var url: String = "", @SerializedName("owner") var owner: String = ""){
+
+//    получение url на страницу фотографии
     val photoPageUri: Uri get() {
             return Uri.parse("https://www.flickr.com/photos/")
                 .buildUpon()
