@@ -10,7 +10,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.*
 import com.bignerdranch.android.photogallery.entity.GalleryItem
+import com.bignerdranch.android.photogallery.model.PollWorker
 import com.bignerdranch.android.photogallery.model.QueryPreferences
+import com.bignerdranch.android.photogallery.ui.PhotoGalleryCoroutinesViewModel
+import com.bignerdranch.android.photogallery.ui.PhotoGalleryViewModel
+import com.bignerdranch.android.photogallery.ui.PhotoPageActivity
+import com.bignerdranch.android.photogallery.ui.VisibleFragment
 import com.squareup.picasso.Picasso
 import java.util.concurrent.TimeUnit
 
@@ -21,7 +26,8 @@ private const val POLL_WORK = "POLL_WORK"
 //см 641
 class PhotoGalleryFragment : VisibleFragment() {
 
-    private lateinit var photoGalleryViewModel: PhotoGalleryViewModel
+//    private lateinit var photoGalleryViewModel: PhotoGalleryViewModel
+    private lateinit var photoGalleryViewModel: PhotoGalleryCoroutinesViewModel
     private lateinit var photoRecyclerView: RecyclerView
 //    private lateinit var thumbnailDownloader: ThumbnailDownloader<PhotoHolder>
 
@@ -33,7 +39,8 @@ class PhotoGalleryFragment : VisibleFragment() {
 
         setHasOptionsMenu(true)
 
-        photoGalleryViewModel = ViewModelProvider(this).get(PhotoGalleryViewModel::class.java)
+//        photoGalleryViewModel = ViewModelProvider(this).get(PhotoGalleryViewModel::class.java)
+        photoGalleryViewModel = ViewModelProvider(this).get(PhotoGalleryCoroutinesViewModel::class.java)
 
 //        val responseHandler = Handler()
 //        получение готовых изображений из фонового потока
@@ -116,7 +123,6 @@ class PhotoGalleryFragment : VisibleFragment() {
                     photoGalleryViewModel.fetchPhotos(queryText)
 
                     clearFocus()
-                    
                     return true
                 }
 
